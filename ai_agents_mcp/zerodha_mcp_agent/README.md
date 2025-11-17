@@ -4,6 +4,8 @@ A Streamlit application that analyzes your Zerodha holdings using Kite Model Con
 
 ✨ **Powered by LangGraph and OpenAI GPT-4o for intelligent portfolio analysis!**
 
+https://github.com/user-attachments/assets/c72b14c5-ae48-4965-970d-18adc4426535
+
 ## Features
 
 * **AI-Powered Analysis**: Get comprehensive portfolio insights using advanced language models
