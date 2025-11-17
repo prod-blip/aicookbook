@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-# Replace with your credentials
+
 api_key = os.getenv("KITE_API_KEY")
 api_secret = os.getenv("KITE_API_SECRET")
 

@@ -1,6 +1,6 @@
-# Zerodha Portfolio Analyzer
+# 📊 Zerodha Portfolio Analyzer
 
-A Streamlit application that analyzes your Zerodha holdings using AI to provide personalized portfolio insights, diversification scores, and actionable investment recommendations.
+A Streamlit application that analyzes your Zerodha holdings using Kite Model Context Protocol (MCP) & AI to provide personalized portfolio insights, diversification scores, and actionable investment recommendations.
 
 ✨ **Powered by LangGraph and OpenAI GPT-4o for intelligent portfolio analysis!**
 
@@ -28,8 +28,8 @@ A Streamlit application that analyzes your Zerodha holdings using AI to provide 
 1. Clone this repository:
 
 ```bash
-git clone <your-repo-url>
-cd zerodha_portfolio_analyzer
+git clone https://github.com/prod-blip/aicookbook.git
+cd ai_agents_mcp/zerodha_mcp_agent
 ```
 
 2. Install the required Python packages:
@@ -70,40 +70,13 @@ KITE_ACCESS_TOKEN=your_access_token_here
 
 Access tokens need to be generated daily (valid until 3:30 PM IST). Run this one-time setup:
 
-1. Create `auth_kite.py`:
-
-```python
-from kiteconnect import KiteConnect
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-api_key = os.getenv("KITE_API_KEY")
-api_secret = os.getenv("KITE_API_SECRET")
-
-kite = KiteConnect(api_key=api_key)
-
-# Step 1: Get login URL
-print("Visit this URL to authorize:")
-print(kite.login_url())
-
-# Step 2: After authorization, paste request_token
-request_token = input("\nEnter request_token from redirect URL: ")
-
-# Step 3: Generate access token
-data = kite.generate_session(request_token, api_secret=api_secret)
-print(f"\n✅ Access Token: {data['access_token']}")
-print("\nAdd this to your .env file as KITE_ACCESS_TOKEN")
-```
-
-2. Run the authentication script:
+1. Run the access token script:
 
 ```bash
-python auth_kite.py
+python accesstoken.py
 ```
 
-3. Follow the prompts:
+2. Follow the prompts:
    * Click the generated URL
    * Login to Zerodha
    * Copy the `request_token` from the redirect URL
@@ -115,7 +88,7 @@ python auth_kite.py
 1. Start the Streamlit app:
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run zerodha_mcp_agent.py
 ```
 
 2. In the app interface:
@@ -163,13 +136,10 @@ authenticate → fetch_holdings → analyze
 
 ## Important Notes
 
-⚠️ **Token Expiry**: Zerodha access tokens expire daily at 3:30 PM IST. You'll need to regenerate the token using `auth_kite.py` each day.
+⚠️ **Token Expiry**: Zerodha access tokens expire daily at 3:30 PM IST. You'll need to regenerate the token using `accesstoken.py` each day.
 
 🔐 **Security**: All credentials are stored locally in your `.env` file. API calls are made only to OpenAI and Zerodha's official servers.
 
-💰 **API Costs**: 
-* Zerodha Kite Connect: ₹2,000/month subscription
-* OpenAI API: Pay-per-use (typically ₹2-5 per analysis)
 
 📊 **Data Freshness**: Holdings data is fetched in real-time from your Zerodha account.
 
@@ -196,6 +166,4 @@ Unlike some MCP agents, this application directly uses the KiteConnect Python li
 * **Trading API**: Zerodha Kite Connect
 * **Async Processing**: Python asyncio
 
----
 
-Built with ❤️ for Indian stock market investors | [Report Issues](your-repo-url/issues)

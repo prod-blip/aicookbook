@@ -1,4 +1,3 @@
-# streamlit_app.py
 import asyncio
 import os
 import streamlit as st
