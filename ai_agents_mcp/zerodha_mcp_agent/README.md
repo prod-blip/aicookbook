@@ -4,6 +4,8 @@ A Streamlit application that analyzes your Zerodha holdings using AI to provide 
 
 ✨ **Powered by LangGraph and OpenAI GPT-4o for intelligent portfolio analysis!**
 
+https://github.com/user-attachments/assets/dac220ef-084c-4f4f-8da7-44c6182a1c40
+
 ## Features
 
 * **AI-Powered Analysis**: Get comprehensive portfolio insights using advanced language models
