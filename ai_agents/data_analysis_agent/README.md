@@ -1,4 +1,4 @@
-# 📊 AI Data Analyst - Natural Language Data Analysis
+# 📊 Data Analysis Agent - Natural Language Data Analysis
 
 An intelligent data analysis agent that understands natural language questions and automatically generates insights, statistics, and visualizations from your CSV/Excel files.
 
@@ -27,8 +27,8 @@ An intelligent data analysis agent that understands natural language questions a
 
 1. Clone this repository:
 ```bash
-git clone <your-repo-url>
-cd data-analysis-agent
+git clone https://github.com/prod-blip/aicookbook.git
+cd ai_agents/data_analysis_agent
 ```
 
 2. Install the required Python packages:
@@ -117,45 +117,32 @@ The application uses **LangGraph** with a **sequential workflow pattern** consis
          ┌──────────────────────────┐
          │   1. LOAD DATA NODE      │
          │  ─────────────────────   │
-         │  • Read CSV/Excel        │
-         │  • Try multiple encodings│
-         │  • Validate format       │
-         │  • Store in state["df"]  │
+         │  • Read CSV/Excel        │ │
          └──────────────────────────┘
                       ↓
          ┌──────────────────────────┐
          │  2. UNDERSTAND QUERY     │
          │  ─────────────────────   │
          │  • Analyze user question │
-         │  • Inspect data structure│
-         │  • Create analysis plan  │
-         │  • Decide if chart needed│
+         │  • Inspect data structure││
          └──────────────────────────┘
                       ↓
          ┌──────────────────────────┐
          │  3. GENERATE CODE        │
          │  ─────────────────────   │
-         │  • LLM writes Python code│
-         │  • Handles numeric/text  │
-         │  • Creates 'result' dict │
-         │  • Validates syntax      │
+         │  • LLM writes Python code│   │
          └──────────────────────────┘
                       ↓
          ┌──────────────────────────┐
          │  4. EXECUTE ANALYSIS     │
          │  ─────────────────────   │
-         │  • Run generated code    │
-         │  • Perform calculations  │
-         │  • Handle errors safely  │
-         │  • Store results         │
+         │  • Run generated code    │     │
          └──────────────────────────┘
                       ↓
          ┌──────────────────────────┐
          │  5. GENERATE CHART       │
          │  ─────────────────────   │
-         │  • LLM creates viz code  │
-         │  • Execute matplotlib    │
-         │  • Convert to base64     │
+         │  • LLM creates viz code  │   │
          │  • Store image           │
          └──────────────────────────┘
                       ↓
@@ -189,8 +176,6 @@ The application uses **LangGraph** with a **sequential workflow pattern** consis
 💰 **API Costs**: Each analysis uses GPT-4o (3-4 API calls per query). Monitor your OpenAI usage at [platform.openai.com](https://platform.openai.com/usage).
 
 📊 **File Size Limits**: Streamlit has a default 200MB upload limit. For larger files, increase with `server.maxUploadSize` in `.streamlit/config.toml`.
-
-🔧 **Code Execution**: Generated Python code runs in a sandboxed environment with access to pandas, numpy, and matplotlib only.
 
 ⚡ **Performance**: First query may take 10-15 seconds as the LLM generates code. Subsequent queries on same data are faster.
 
@@ -246,4 +231,3 @@ pip install -r requirements.txt
 
 ---
 
-Built with ❤️ for data analysts who want to explore data conversationally | [Report Issues](https://github.com/your-username/data-analysis-agent/issues)

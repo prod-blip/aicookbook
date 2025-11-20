@@ -491,7 +491,7 @@ async def run_analysis(file_path: str, user_query: str):
 
 # Page config - ALWAYS FIRST
 st.set_page_config(
-    page_title="AI Data Analyst",
+    page_title="Data Analysis Agent",
     page_icon="📊",
     layout="wide"
 )
