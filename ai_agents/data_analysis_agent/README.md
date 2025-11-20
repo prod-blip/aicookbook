@@ -4,6 +4,10 @@ An intelligent data analysis agent that understands natural language questions a
 
 ✨ **Powered by LangGraph + GPT-4o for conversational data exploration**
 
+
+https://github.com/user-attachments/assets/80276852-f65e-4969-820a-11ae8c9e3bdc
+
+
 ## Features
 
 * 🤖 **Natural Language Queries** - Ask questions in plain English, no coding required
