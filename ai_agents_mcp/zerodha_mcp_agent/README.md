@@ -31,7 +31,7 @@ https://github.com/user-attachments/assets/c72b14c5-ae48-4965-970d-18adc4426535
 
 ```bash
 git clone https://github.com/prod-blip/aicookbook.git
-cd ai_agents_mcp/zerodha_mcp_agent
+cd aicookbook/ai_agents_mcp/zerodha_mcp_agent
 ```
 
 2. Install the required Python packages:
