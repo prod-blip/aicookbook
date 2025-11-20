@@ -28,7 +28,7 @@ An intelligent data analysis agent that understands natural language questions a
 1. Clone this repository:
 ```bash
 git clone https://github.com/prod-blip/aicookbook.git
-cd ai_agents/data_analysis_agent
+cd aicookbook/ai_agents/data_analysis_agent
 ```
 
 2. Install the required Python packages:
