@@ -54,7 +54,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 1. Start the Streamlit application:
 ```bash
-streamlit run app.py
+streamlit run data_analysis_agent.py
 ```
 
 2. Your browser will automatically open to `http://localhost:8501`
