@@ -4,6 +4,12 @@ An AI-powered news aggregator that fetches live Indian headlines and provides de
 
 ✨ **Built with LangGraph for agentic workflows and GPT-4o for intelligent analysis**
 
+
+
+https://github.com/user-attachments/assets/e897f0d8-20b8-449d-8338-4ae38953f764
+
+
+
 ## Features
 
 * 🔄 Fetch live Indian news headlines from NewsData.io API
