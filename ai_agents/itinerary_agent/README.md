@@ -4,6 +4,12 @@ An intelligent travel planning assistant that generates personalized day-by-day 
 
 ✨ **Powered by LangGraph multi-agent architecture with GPT-4o and interactive Folium maps**
 
+
+
+https://github.com/user-attachments/assets/9e647dab-cd78-44ba-88ea-69c5f48d066b
+
+
+
 ## Features
 
 * **Human-in-the-Loop Workflow** - Review and edit AI-generated plans before final generation, ensuring complete control over your itinerary
