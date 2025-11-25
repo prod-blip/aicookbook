@@ -1,4 +1,4 @@
-# AI Itinerary Planner
+# AI Itinerary Agent
 
 An intelligent travel planning assistant that generates personalized day-by-day itineraries with interactive route maps, featuring a human-in-the-loop workflow for complete user control over destinations and activities.
 
