@@ -1,311 +1,598 @@
-# Itinerary Planner Agent - Optimized Modular Version
+# AI Itinerary Planner
 
-Clean, production-ready travel itinerary planner with human-in-the-loop workflow and interactive maps.
+An intelligent travel planning assistant that generates personalized day-by-day itineraries with interactive route maps, featuring a human-in-the-loop workflow for complete user control over destinations and activities.
 
-## 🎯 Project Structure
+✨ **Powered by LangGraph multi-agent architecture with GPT-4o and interactive Folium maps**
 
+## Features
+
+* **Human-in-the-Loop Workflow** - Review and edit AI-generated plans before final generation, ensuring complete control over your itinerary
+* **Two-Stage Agent System** - Draft agent creates editable day-wise breakdown, Final agent generates comprehensive detailed itinerary
+* **Intelligent Location Extraction** - AI automatically identifies and geocodes 5-8 key destinations from your itinerary text
+* **Interactive Day-Wise Maps** - Color-coded routes for each day with layer controls to filter and focus on specific days
+* **Flexible Customization** - "Anything Else" field lets you add must-visit places or special requirements that get incorporated automatically
+* **Budget-Aware Recommendations** - Get suggestions tailored to Low, Medium, or High budget levels
+* **Downloadable Itineraries** - Export your complete travel plan as Markdown for offline access
+* **Free Geocoding & Maps** - Uses OpenStreetMap and Nominatim, no Mapbox API required
+
+## Setup
+
+### Requirements
+
+* Python 3.8+
+* OpenAI API Key (for GPT-4o)
+* Internet connection (for geocoding and map tiles)
+
+### Installation
+
+1. Clone this repository or download the `optimized/` folder:
+
+```bash
+cd optimized/
 ```
-optimized/
-├── agents/
-│   ├── __init__.py
-│   ├── draft_agent.py      # Draft itinerary generation
-│   └── final_agent.py      # Final detailed itinerary + location extraction
-├── maps/
-│   ├── __init__.py
-│   └── map_utils.py        # Map creation and visualization
-├── utils/
-│   ├── __init__.py
-│   ├── llm.py              # LLM factory function
-│   ├── cleanup.py          # JSON cleaning helper
-│   └── geo.py              # Geocoding utilities
-├── streamlit_app.py        # Main UI application
-├── requirements.txt
-├── .env.example
-└── README.md
-```
 
-## ✨ Key Improvements
-
-### 1. **Modular Architecture**
-- Separated concerns: agents, maps, utils, UI
-- Single Responsibility Principle for each module
-- Easy to test and maintain
-
-### 2. **DRY (Don't Repeat Yourself)**
-- `get_llm()` factory function eliminates duplicate LLM instantiation
-- `strip_json()` helper removes repeated JSON cleaning logic
-- `geocode()` and `reverse_geocode()` consolidate API calls
-- Session state initialization in one function
-
-### 3. **Clean Code**
-- Clear function names and docstrings
-- Type hints for better IDE support
-- Consistent error handling patterns
-- Well-organized imports
-
-### 4. **Production-Ready**
-- Proper Python package structure
-- Reusable components
-- Easy to extend with new features
-- Better performance with optimized imports
-
-## 🚀 Features
-
-- ✅ **Human-in-the-loop workflow**: Review and edit AI-generated plans
-- ✅ **Day-wise itinerary**: Structured day-by-day breakdown
-- ✅ **Interactive maps**: Folium maps with layer control
-- ✅ **Color-coded routes**: Different colors for each day
-- ✅ **Location extraction**: AI finds and geocodes places automatically
-- ✅ **Additional requirements**: "Anything else" field for custom requests
-- ✅ **Download option**: Export itinerary as Markdown
-- ✅ **Budget-aware**: Recommendations based on budget level
-
-## 📦 Installation
-
-### 1. Install Dependencies
+2. Install the required Python packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Setup Environment
+Packages installed:
+- `langgraph` - Agent orchestration framework
+- `langchain-openai` - OpenAI GPT-4o integration
+- `streamlit` - Web interface
+- `streamlit-folium` - Interactive maps in Streamlit
+- `folium` - Map visualization library
+- `requests` - API calls for geocoding
+- `python-dotenv` - Environment variable management
 
-Create a `.env` file:
+3. Get your API credentials:
+   * **OpenAI API Key**: https://platform.openai.com/api-keys
+     - Sign up or log in to OpenAI
+     - Navigate to API Keys section
+     - Create a new secret key
+     - Copy and save securely
+
+4. Setup your `.env` file:
 
 ```bash
 cp .env.example .env
 ```
 
-Add your OpenAI API key:
+Edit `.env` and add your OpenAI API key:
 
+```env
+OPENAI_API_KEY=sk-proj-...your-actual-key-here
 ```
-OPENAI_API_KEY=sk-...your-key-here
+
+**Important:** Never commit the `.env` file to version control. It's included in `.gitignore`.
+
+## Running the App
+
+1. Navigate to the optimized directory:
+
+```bash
+cd optimized/
 ```
 
-Get your key from: https://platform.openai.com/api-keys
-
-### 3. Run the Application
+2. Start the Streamlit application:
 
 ```bash
 streamlit run streamlit_app.py
 ```
 
-The app will open at `http://localhost:8501`
+3. Your browser will automatically open to `http://localhost:8501`
 
-## 🎮 How to Use
+4. If the browser doesn't open automatically, manually navigate to the URL shown in the terminal
 
-### Stage 1: Input Details
-1. Enter destination (e.g., "Tokyo, Japan")
-2. Specify duration (e.g., "7 days")
-3. Add interests (e.g., "anime, food, temples")
-4. Select budget level (Low/Medium/High)
-5. Click "Generate Draft Itinerary"
+5. You'll see the three-stage workflow interface ready to use
 
-### Stage 2: Review & Edit
-1. Review the AI-generated day-wise plan
-2. Edit main destinations for each day
-3. Modify places to visit (comma-separated)
-4. Add any additional requirements in "Anything Else"
-5. Click "Approve & Generate Full Itinerary"
+## How It Works - Complete Workflow
 
-### Stage 3: View Results
-1. Read your detailed itinerary
-2. Explore the interactive map with color-coded routes
-3. Toggle day layers to focus on specific days
-4. Download your itinerary as Markdown
-5. Plan another trip or make adjustments
+### Stage 1: Input Trip Details
 
-## 🏗️ Architecture
+**What you do:**
+- Enter your destination (e.g., "Tokyo, Japan")
+- Specify duration (e.g., "7 days", "1 week")
+- Add interests (e.g., "anime, food, temples, technology")
+- Select budget level (Low, Medium, High)
+- Click "Generate Draft Itinerary"
 
-### LangGraph Workflows
+**What happens:**
+- Draft Agent activates
+- GPT-4o analyzes your requirements
+- Creates a day-by-day breakdown in JSON format
+- Each day gets a main destination and 3-5 places to visit
+- Takes 5-10 seconds
 
-**Draft Agent (1 node):**
+### Stage 2: Review & Edit Draft
+
+**What you see:**
+- Day-by-day breakdown with editable fields
+- Main destination for each day (text input)
+- Places to visit for each day (comma-separated text area)
+- "Anything Else" field for additional requirements
+
+**What you do:**
+- Review the AI-generated plan
+- Edit main destinations if needed (e.g., change "Shibuya" to "Akihabara")
+- Modify places to visit (add, remove, or reorder)
+- Add any missed requirements in "Anything Else" (e.g., "I want to visit teamLab Borderless, try authentic ramen at Ichiran")
+- Click "Approve & Generate Full Itinerary"
+
+**Why this matters:**
+- You have complete control before generating the detailed plan
+- Ensures AI includes your must-visit places
+- Prevents wasted API calls on unwanted suggestions
+
+### Stage 3: View Final Results
+
+**What you get:**
+
+**Left Side - Detailed Itinerary:**
+- Complete day-by-day breakdown with timings
+- Morning, afternoon, and evening activities
+- Specific place descriptions and tips
+- Local food recommendations with restaurant names
+- Estimated costs based on your budget
+- Transportation suggestions between locations
+- Practical tips for each destination
+
+**Right Side - Interactive Map:**
+- All locations plotted with numbered markers
+- Color-coded by day:
+  - Day 1: Red
+  - Day 2: Blue  
+  - Day 3: Green
+  - Day 4: Purple
+  - Day 5: Orange
+  - (Up to 10 days with unique colors)
+- Routes connecting locations within each day
+- Animated ant paths showing direction
+- Layer control checkboxes to show/hide specific days
+- Click markers for location details
+- Auto-zoomed to show all destinations
+
+**Actions available:**
+- Download itinerary as Markdown file
+- Plan another trip (resets workflow)
+
+## Agent Architecture
+
+The application uses **LangGraph** with a **two-stage agentic workflow**:
+
+### Architecture Diagram
+
 ```
-generate_draft → END
+┌─────────────────────────────────────────────────────────────┐
+│                  STAGE 1: DRAFT GENERATION                  │
+└─────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+                  ┌──────────────────┐
+                  │  User Inputs:    │
+                  │  • Destination   │
+                  │  • Duration      │
+                  │  • Interests     │
+                  │  • Budget        │
+                  └────────┬─────────┘
+                           │
+                           ▼
+        ╔══════════════════════════════════════╗
+        ║     DRAFT AGENT (LangGraph)          ║
+        ╠══════════════════════════════════════╣
+        ║  Node: generate_draft_itinerary      ║
+        ║  • Analyzes requirements             ║
+        ║  • Creates day-wise JSON structure   ║
+        ║  • Assigns main destination per day  ║
+        ║  • Suggests 3-5 places per day       ║
+        ╚══════════════════════════════════════╝
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │  Draft Output:   │
+                  │  JSON array with │
+                  │  day-wise plan   │
+                  └────────┬─────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│              STAGE 2: HUMAN REVIEW & EDITING                │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │  User Reviews:   │
+                  │  • Edits days    │
+                  │  • Changes places│
+                  │  • Adds extras   │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │  Approved Draft  │
+                  │  + "Anything     │
+                  │     Else" reqs   │
+                  └────────┬─────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│              STAGE 3: FINAL GENERATION                      │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+        ╔══════════════════════════════════════╗
+        ║      FINAL AGENT (LangGraph)         ║
+        ╠══════════════════════════════════════╣
+        ║  Node 1: generate_itinerary          ║
+        ║  • Takes approved draft as input     ║
+        ║  • Incorporates "Anything Else"      ║
+        ║  • Generates detailed descriptions   ║
+        ║  • Adds timings and costs            ║
+        ║  • Includes transport suggestions    ║
+        ╠══════════════════════════════════════╣
+        ║  Node 2: extract_locations           ║
+        ║  • AI reads generated itinerary      ║
+        ║  • Identifies 5-8 key locations      ║
+        ║  • Assigns each to correct day       ║
+        ║  • Geocodes using Nominatim API      ║
+        ║  • Returns lat/lon coordinates       ║
+        ╠══════════════════════════════════════╣
+        ║  Node 3: format_output               ║
+        ║  • Structures final markdown         ║
+        ║  • Adds headers and sections         ║
+        ║  • Lists all plotted locations       ║
+        ║  • Includes travel tips              ║
+        ╚══════════════════════════════════════╝
+                           │
+                           ├──────────────┬─────────────┐
+                           ▼              ▼             ▼
+                  ┌──────────────┐  ┌──────────┐  ┌────────┐
+                  │   Formatted  │  │Locations │  │  Map   │
+                  │   Itinerary  │  │with coords│  │ Data   │
+                  └──────────────┘  └──────────┘  └────────┘
+                                          │
+                                          ▼
+                              ┌────────────────────┐
+                              │  create_itinerary_ │
+                              │  map() Function    │
+                              │  • Groups by day   │
+                              │  • Applies colors  │
+                              │  • Adds markers    │
+                              │  • Draws routes    │
+                              │  • Layer controls  │
+                              └────────────────────┘
+                                          │
+                                          ▼
+                              ┌────────────────────┐
+                              │  Interactive Map   │
+                              │  Displayed in UI   │
+                              └────────────────────┘
 ```
-- Creates simple JSON structure for human review
-- Fast generation for quick iteration
 
-**Final Agent (3 nodes):**
+### Node Descriptions
+
+**Draft Agent (Single Node):**
+
+1. **generate_draft_itinerary_node**
+   - **Purpose**: Create a simple, editable day-wise plan
+   - **Input**: Destination, duration, interests, budget
+   - **LLM Call**: GPT-4o with structured JSON prompt
+   - **Output**: JSON array with day, main_destination, and places for each day
+   - **Processing Time**: 5-10 seconds
+
+**Final Agent (Three Sequential Nodes):**
+
+1. **generate_itinerary_node**
+   - **Purpose**: Create comprehensive detailed itinerary
+   - **Input**: Approved draft + original parameters + "Anything Else" requirements
+   - **Special Processing**: Looks for "IMPORTANT ADDITIONAL REQUIREMENTS" flag in interests
+   - **LLM Call**: GPT-4o with detailed prompt including approved plan
+   - **Output**: Rich markdown text with full day-by-day breakdown
+   - **Processing Time**: 15-30 seconds
+
+2. **extract_locations_node**
+   - **Purpose**: Identify and geocode key destinations
+   - **Input**: Generated itinerary text + day-wise plan for reference
+   - **LLM Call**: GPT-4o with extraction prompt (temperature=0 for consistency)
+   - **Geocoding**: Nominatim API (OpenStreetMap) for each location
+   - **Output**: List of locations with name, lat, lon, display_name, and day assignment
+   - **Error Handling**: Skips locations that can't be geocoded
+   - **Processing Time**: 10-20 seconds (includes geocoding API calls)
+
+3. **format_output_node**
+   - **Purpose**: Structure the final markdown output
+   - **Input**: Raw itinerary + locations list
+   - **Processing**: Adds headers, metadata, location list, travel tips
+   - **Output**: Complete formatted markdown ready for display/download
+   - **Processing Time**: <1 second
+
+### Data Flow
+
 ```
-generate_itinerary → extract_locations → format_output → END
+User Input → Draft JSON → User Edits → Approved JSON → Detailed Text → Locations Array → Formatted Output + Map
 ```
-- Generates detailed itinerary from approved draft
-- Extracts 5-8 key locations with day assignments
-- Geocodes and plots on interactive map
 
-### Module Responsibilities
+### State Management
 
-**agents/**: LangGraph workflows
-- `draft_agent.py`: Generates editable day-wise breakdown
-- `final_agent.py`: Creates detailed itinerary with location extraction
+Both agents use **TypedDict** for type-safe state management:
 
-**maps/**: Visualization
-- `map_utils.py`: Creates Folium maps with day-wise coloring and routes
+**DraftState:**
+```python
+{
+    "destination": str,
+    "duration": str,
+    "interests": str,
+    "budget": str,
+    "draft_itinerary": str,  # JSON string
+    "messages": list
+}
+```
 
-**utils/**: Helper functions
-- `llm.py`: Centralized LLM factory
-- `cleanup.py`: JSON string cleaning
-- `geo.py`: Forward and reverse geocoding
+**FinalState:**
+```python
+{
+    "destination": str,
+    "duration": str,
+    "interests": str,
+    "budget": str,
+    "user_modifications": str,  # Approved JSON
+    "raw_itinerary": str,
+    "formatted_itinerary": str,
+    "locations": List[Dict],  # Geocoded locations
+    "messages": list
+}
+```
 
-**streamlit_app.py**: UI logic
-- Three-stage workflow management
-- Session state handling
-- User input validation
+## Key Features Explained
 
-## 🎨 Map Features
+### Human-in-the-Loop Design
 
-### Day-wise Color Coding
+**Problem Solved:** AI can sometimes suggest places you don't want to visit or miss your must-see destinations.
+
+**Solution:** Two-stage generation with human approval in between ensures the final detailed itinerary is based on YOUR edited plan, not just the AI's initial suggestion.
+
+### Intelligent Location Extraction
+
+**How it works:**
+1. Final Agent generates detailed text itinerary
+2. A separate LLM call extracts 5-8 specific location names
+3. Each location is assigned to the correct day based on the approved plan
+4. Nominatim API geocodes each location (free, no API key needed)
+5. Failed geocoding requests are skipped (logged but don't break the flow)
+
+**Why this approach:**
+- More reliable than regex parsing
+- Handles various location name formats
+- Day assignment ensures correct color coding on map
+
+### Day-Wise Color-Coded Maps
+
+**Color Palette:**
 - Day 1: Red
 - Day 2: Blue
 - Day 3: Green
 - Day 4: Purple
 - Day 5: Orange
-- (Supports up to 10 days)
+- Day 6: Dark Red
+- Day 7: Light Red
+- Day 8: Beige
+- Day 9: Dark Blue
+- Day 10: Dark Green
 
-### Interactive Elements
-- **Markers**: Show each location with day and sequence number
+**Map Features:**
+- **Markers**: Numbered icons showing stop sequence
 - **Routes**: Polylines connecting locations within each day
-- **Animated paths**: Ant path animation showing route direction
-- **Layer control**: Toggle visibility of specific days
+- **Animated Paths**: Ant path animation showing route direction
+- **Layer Control**: Checkboxes to toggle day visibility
 - **Popups**: Click markers for location details
-- **Auto-fit**: Map automatically zooms to show all locations
+- **Auto-fit**: Map automatically zooms to show all markers
 
-## 💡 Code Comparison
+### "Anything Else" Feature
 
-### Before (Repetitive):
-```python
-# In 3 different nodes:
-llm = ChatOpenAI(model="gpt-4o", api_key=os.getenv("OPENAI_API_KEY"), temperature=0.7)
+**Purpose:** Capture requirements that might have been missed in initial planning.
 
-# In 3 different nodes:
-if text.startswith("```"):
-    text = text.replace("```json", "").replace("```", "")
+**How it works:**
+- User adds text like: "I want to visit the Ghibli Museum and try authentic okonomiyaki"
+- System prepends "IMPORTANT ADDITIONAL REQUIREMENTS (MUST INCLUDE):" to this text
+- Final Agent's prompt explicitly instructs it to incorporate ALL these requirements
+- LLM is told these are MANDATORY and must be explicitly mentioned in the itinerary
+
+**Why the emphasis:** Without strong prompting, LLMs sometimes skip user-added requirements. The MUST INCLUDE flag ensures they're prioritized.
+
+## Important Notes
+
+⚠️ **Geocoding Rate Limits**: Nominatim has a rate limit of 1 request per second. The app handles this automatically, but extracting many locations may take 10-20 seconds.
+
+🔐 **API Key Security**: Never share your OpenAI API key. Keep it in `.env` and ensure `.env` is in `.gitignore`. The key is only used server-side (not sent to browser).
+
+💰 **Cost Considerations**: 
+- Each itinerary uses 2-3 GPT-4o API calls
+- Estimated cost: $0.02-$0.05 per itinerary
+- Draft generation: ~$0.01
+- Final generation: ~$0.02-$0.03
+- Location extraction: ~$0.01
+- Monitor your usage at https://platform.openai.com/usage
+
+📊 **Data Handling**: 
+- No data is stored permanently
+- All data lives in Streamlit session state
+- Closing the browser tab clears all data
+- Downloaded files are only stored locally on your machine
+
+🗺️ **Map Limitations**:
+- Routes shown are straight lines, not actual roads
+- For real road routing, consider adding OpenRouteService API (free tier available)
+- Some obscure locations may not geocode successfully
+- Internet connection required for map tiles
+
+⏱️ **Processing Time**:
+- Draft generation: 5-10 seconds
+- Final generation: 15-30 seconds  
+- Location extraction: 10-20 seconds
+- Total: 30-60 seconds for complete itinerary
+
+## Troubleshooting
+
+### Error: "OpenAI API key not found"
+
+**Solutions:**
+* Check that `.env` file exists in the `optimized/` directory
+* Verify the file contains: `OPENAI_API_KEY=sk-...`
+* Ensure no extra spaces around the `=` sign
+* Restart the Streamlit app after adding the key
+
+### Error: "No locations were extracted"
+
+**Possible causes:**
+* LLM returned locations that couldn't be geocoded
+* Location names were too vague (e.g., "a temple" instead of "Senso-ji Temple")
+* Geocoding API temporarily unavailable
+
+**Solutions:**
+* Try regenerating the itinerary
+* In draft stage, use more specific location names
+* Check console output for geocoding errors
+* Verify internet connection
+
+### Map not displaying
+
+**Solutions:**
+* Check internet connection (needs to load OpenStreetMap tiles)
+* Try a different browser (Chrome/Firefox recommended)
+* Clear browser cache
+* Check browser console for JavaScript errors
+* Ensure port 8501 is not blocked by firewall
+
+### App is very slow
+
+**Possible causes:**
+* OpenAI API experiencing high load
+* Poor internet connection
+* Many locations to geocode
+
+**Solutions:**
+* Be patient - AI generation takes time
+* Check OpenAI status: https://status.openai.com/
+* Reduce number of days in itinerary
+* Simplify location requests
+
+### "JSON parsing error" in draft or final stage
+
+**Solutions:**
+* This is a prompt engineering issue - try again
+* If persistent, check agents/draft_agent.py or agents/final_agent.py
+* The `strip_json()` helper should handle markdown code blocks
+* File an issue if it keeps happening
+
+### Downloaded itinerary has formatting issues
+
+**Solutions:**
+* Use a Markdown viewer (VS Code, Typora, or online viewer)
+* Copy to a text editor that supports Markdown
+* The file is plain text - formatting shows in Markdown renderers
+
+## Tech Stack
+
+* **LangGraph** - Multi-agent orchestration framework for building reliable LLM workflows
+* **GPT-4o** - OpenAI's most advanced model for itinerary generation and location extraction
+* **Streamlit** - Python web framework for rapid UI development with native Python
+* **Folium** - Python library for interactive Leaflet.js maps with full customization
+* **OpenStreetMap** - Free, community-driven map tiles and data
+* **Nominatim** - Free geocoding API from OpenStreetMap (no API key required)
+* **Python 3.8+** - Core programming language with async support
+* **python-dotenv** - Secure environment variable management
+* **Requests** - HTTP library for API calls
+
+## Project Structure
+
+```
+optimized/
+├── agents/
+│   ├── draft_agent.py          # Draft generation workflow
+│   └── final_agent.py          # Final itinerary + location extraction
+├── maps/
+│   └── map_utils.py            # Map creation and visualization
+├── utils/
+│   ├── llm.py                  # LLM factory function
+│   ├── cleanup.py              # JSON cleaning helper
+│   └── geo.py                  # Geocoding utilities
+├── streamlit_app.py            # Main UI application
+├── requirements.txt            # Python dependencies
+└── .env                        # API keys (not committed)
 ```
 
-### After (DRY):
-```python
-# Once in utils/llm.py:
-llm = get_llm(temperature=0.7)
+## Example Usage
 
-# Once in utils/cleanup.py:
-cleaned = strip_json(text)
+**Input:**
+```
+Destination: Kyoto, Japan
+Duration: 5 days
+Interests: temples, gardens, traditional culture, matcha
+Budget: Medium
 ```
 
-## 📊 Benefits of This Structure
-
-### For Development
-- ✅ Easy to add new features
-- ✅ Simple to test individual components
-- ✅ Better IDE autocomplete
-- ✅ Clear separation of concerns
-
-### For Maintenance
-- ✅ Bug fixes in one place
-- ✅ Easier code reviews
-- ✅ Better documentation
-- ✅ Simpler onboarding for new developers
-
-### For Production
-- ✅ Optimized imports
-- ✅ Reusable components
-- ✅ Better error isolation
-- ✅ Scalable architecture
-
-## 🔧 Extending the Application
-
-### Add a New Agent Node
-1. Create node function in appropriate agent file
-2. Add to workflow in `create_X_graph()`
-3. Update state TypedDict if needed
-
-### Add a New Map Feature
-1. Add function to `maps/map_utils.py`
-2. Import in `streamlit_app.py`
-3. Call in appropriate stage
-
-### Add a New Utility
-1. Create function in appropriate utils file
-2. Export in `utils/__init__.py`
-3. Import where needed
-
-## 🐛 Troubleshooting
-
-**Import Errors:**
-```bash
-# Run from the optimized/ directory
-cd optimized/
-streamlit run streamlit_app.py
+**Draft Output (Stage 2):**
+```json
+[
+  {
+    "day": 1,
+    "main_destination": "Eastern Kyoto (Higashiyama)",
+    "places": ["Kiyomizu-dera Temple", "Sannenzaka Street", "Yasaka Shrine"]
+  },
+  {
+    "day": 2,
+    "main_destination": "Arashiyama",
+    "places": ["Bamboo Grove", "Tenryu-ji Temple", "Togetsukyo Bridge"]
+  }
+  ...
+]
 ```
 
-**Module not found:**
-- Ensure all `__init__.py` files exist
-- Check Python path includes current directory
+**User Edits:**
+- Adds "Fushimi Inari Shrine" to Day 1
+- Changes Day 3 to "Gion District"
+- Adds in "Anything Else": "I want to try kaiseki cuisine"
 
-**API Errors:**
-- Verify `.env` file exists in project root
-- Check OpenAI API key is valid
-- Ensure you have API credits
+**Final Output (Stage 3):**
+- 5-page detailed itinerary with timings
+- 6-8 locations plotted on map with routes
+- Kaiseki restaurant recommendations included
+- Fushimi Inari added to Day 1 with timing and description
 
-## 📈 Performance
+## Limitations
 
-- **60% shorter UI code** compared to monolithic version
-- **Faster imports** with modular structure
-- **Better memory usage** with optimized session state
-- **Cleaner error handling** with centralized functions
+* Routes shown are straight lines (not actual roads)
+* Maximum 10 days supported for color coding (can extend in code)
+* Requires internet for LLM calls, geocoding, and map tiles
+* No offline mode
+* No database - itineraries not saved between sessions
+* Single-city trips only (multi-city requires manual editing)
 
-## 🎓 Best Practices Used
+## Future Enhancements
 
-1. **Single Responsibility Principle**: Each module does one thing well
-2. **DRY**: No code duplication
-3. **Clear naming**: Functions and variables are self-documenting
-4. **Type hints**: Better IDE support and code clarity
-5. **Docstrings**: All functions documented
-6. **Error handling**: Consistent try-except patterns
-7. **Package structure**: Proper Python package layout
+Planned features (contributions welcome):
 
-## 📝 Cost Estimate
+- [ ] Real road routing using OpenRouteService API
+- [ ] Database integration for saving itineraries
+- [ ] User authentication and profile management
+- [ ] Share itineraries via unique links
+- [ ] Export to PDF with embedded map
+- [ ] Multi-city trip support
+- [ ] Weather information integration
+- [ ] Flight and hotel search integration
+- [ ] Mobile-responsive design improvements
+- [ ] Offline mode with cached maps
 
-- OpenAI API: ~$0.02-$0.05 per itinerary
-- Nominatim Geocoding: Free (rate-limited to 1 req/sec)
-- OpenStreetMap tiles: Free
-- Folium: Free
-- Streamlit: Free (self-hosted)
+## Credits
 
-## 🚧 Future Enhancements
-
-Potential additions:
-- [ ] Add caching for geocoding results
-- [ ] Implement actual road routing (OpenRouteService)
-- [ ] Add weather information
-- [ ] Support multi-city trips
-- [ ] Export to PDF
-- [ ] Save/load itineraries from database
-- [ ] User authentication
-- [ ] Share itineraries via link
-
-## 🤝 Contributing
-
-This modular structure makes it easy to contribute:
-
-1. Fork the repository
-2. Create a feature branch
-3. Add your feature in the appropriate module
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-Built for educational and personal use.
-
-## 🙏 Acknowledgments
-
-- LangGraph for agent orchestration
-- OpenAI GPT-4o for itinerary generation
-- Streamlit for the web interface
-- Folium for interactive maps
-- OpenStreetMap for free map data
+* **LangGraph** by LangChain - Enables the multi-agent architecture
+* **OpenAI** - GPT-4o powers the intelligent itinerary generation
+* **Streamlit** - Makes Python web apps incredibly easy to build
+* **Folium** - Brings interactive maps to Python
+* **OpenStreetMap** - Free, open-source map data
+* **Nominatim** - Free geocoding service
 
 ---
 
-Built with ❤️ for travelers who want AI-powered planning with full control.
+Built with ❤️ for travelers who want AI-powered planning with complete control | [View Project Structure](FILE_STRUCTURE.md)
