@@ -322,85 +322,6 @@ The official GitHub MCP server provides these tools:
 - Without token: 60 requests/hour
 - Each query typically uses 1-3 GitHub API calls
 
-## Troubleshooting
-
-### Error: "Docker not found"
-
-**Solutions:**
-* Install Docker from [docker.com](https://www.docker.com/products/docker-desktop)
-* Ensure Docker Desktop is running
-* Verify with: `docker --version`
-* On Linux, start Docker daemon: `sudo systemctl start docker`
-
-### Error: "GitHub MCP connection failed" or "Connection timeout"
-
-**Possible causes:**
-* Docker not running
-* GitHub token invalid or expired
-* Network connectivity issues
-* MCP session not properly initialized
-
-**Solutions:**
-* Start Docker Desktop
-* Regenerate GitHub token at [github.com/settings/tokens](https://github.com/settings/tokens)
-* Check firewall/proxy settings
-* Test Docker: `docker run hello-world`
-* Ensure both `stdio_client` and `ClientSession` use `async with` (code uses correct pattern)
-
-**Technical Note:**
-The MCP Python SDK requires both the `stdio_client` and `ClientSession` to be used as async context managers to keep background message processing tasks alive. The application already implements this correctly with nested `async with` statements.
-
-### Error: "OpenAI API key not found"
-
-**Solutions:**
-* Check `.env` file exists in project directory
-* Verify file contains: `OPENAI_API_KEY=sk-...`
-* No spaces around `=` sign
-* Restart Streamlit after adding key
-
-### First run is very slow
-
-**Explanation:**
-* Docker is downloading GitHub MCP server image
-* Image is ~100MB and downloads once
-* Subsequent runs are much faster
-
-**Solution:**
-* Be patient on first run
-* Pre-download with: `docker pull ghcr.io/github/github-mcp-server`
-
-### Error: "Rate limit exceeded" or "Request too large"
-
-**Error message:**
-`Error code: 429 - Request too large for gpt-4o... The input or output tokens must be reduced`
-
-**Cause:**
-* MCP tool results are too large and exceed OpenAI's token limit (30,000 TPM)
-
-**Solution:**
-* The application automatically truncates results to avoid this issue
-* If you still encounter this, try more specific queries that return less data
-* Consider querying smaller repositories or specific sections
-
-**How it's handled:**
-- Results limited to first 3 items per tool call
-- Each text item truncated to 500 characters
-- Total summary capped at 2000 characters
-
-### Query returns generic answers
-
-**Possible causes:**
-* Query too vague
-* Wrong repository specified
-* MCP tools didn't return relevant data
-* Tool parameters incorrect
-
-**Solutions:**
-* Be more specific in queries
-* Include repository name in query if ambiguous
-* Check that repository exists and is accessible
-* Try rephrasing the question
-* Use queries that match available MCP tools (see Example Queries section)
 
 ## Tech Stack
 
@@ -446,6 +367,5 @@ This project is part of the AI Cookbook repository. See the main repository for 
 
 ---
 
-**Built with ❤️ using GitHub's Official MCP Server, LangGraph, and GPT-4o**
 
 ⭐ **If you find this useful, please star the [AI Cookbook repository](https://github.com/prod-blip/aicookbook)!**
