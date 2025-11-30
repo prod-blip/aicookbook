@@ -1,0 +1,13 @@
+# Core Framework
+langgraph>=0.0.40
+langchain-core
+langchain-openai
+
+# MCP Client
+mcp
+
+# Frontend
+streamlit>=1.28.0
+
+# Utilities
+python-dotenv
