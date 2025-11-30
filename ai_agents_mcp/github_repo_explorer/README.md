@@ -6,7 +6,11 @@ An AI-powered GitHub repository explorer that uses **GitHub's Official Model Con
 
 
 
-https://github.com/user-attachments/assets/485d02ce-c6fd-452e-8fd3-0df15731b214
+
+https://github.com/user-attachments/assets/ea724cf9-619c-4689-803a-43381b46df3a
+
+
+
 
 
 ## Features
