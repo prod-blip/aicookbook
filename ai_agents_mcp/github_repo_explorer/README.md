@@ -4,6 +4,11 @@ An AI-powered GitHub repository explorer that uses **GitHub's Official Model Con
 
 ✨ **Powered by GitHub's Official MCP Server, LangGraph, and GPT-4o**
 
+
+
+https://github.com/user-attachments/assets/485d02ce-c6fd-452e-8fd3-0df15731b214
+
+
 ## Features
 
 * **Official GitHub MCP Server** - Uses GitHub's production-ready MCP server (via Docker) for real-time repository access
