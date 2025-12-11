@@ -4,6 +4,12 @@ An intelligent document Q&A assistant that processes PDF documents and answers q
 
 ✨ **Powered by LangGraph agentic architecture with GPT-4o, OpenAI embeddings, and ChromaDB vector store**
 
+
+
+https://github.com/user-attachments/assets/53bb9d5b-9dcb-4d1c-b1e4-7a6f00a94a61
+
+
+
 ## Features
 
 * **PDF Upload & Processing** - Upload any PDF document and get it automatically chunked, embedded, and indexed for intelligent querying
@@ -176,35 +182,6 @@ The application uses **LangGraph** with a **single conditional graph** and **5 s
 └───────────────────────┘
 ```
 
-### State Flow
-
-**RAGAgentState** manages all workflow data:
-
-```python
-{
-  # Inputs
-  "mode": "process_document" | "query",
-  "pdf_path": "/path/to/file.pdf",
-  "filename": "document.pdf",
-  "query": "user question",
-
-  # Processing outputs
-  "raw_text": "extracted text...",
-  "page_count": 10,
-  "chunks": [{text, metadata}, ...],
-  "chunk_count": 25,
-  "vector_store": ChromaDB_collection,
-
-  # Query outputs
-  "retrieved_chunks": [{text, metadata}, ...],
-  "sources": [{filename, page, chunk_index}, ...],
-  "answer": "AI-generated answer",
-  "citations": ["source.pdf (Page 3)", ...],
-
-  # Error tracking
-  "errors": ["error messages"]
-}
-```
 
 ## Key Features Explained
 
@@ -218,11 +195,6 @@ The application uses **LangGraph** with a **single conditional graph** and **5 s
 - **Page number tracking** - Each chunk knows its source page
 - **Metadata preservation** - Filename, timestamp, and chunk index stored
 
-**Why this approach:**
-- Prevents losing context at chunk boundaries
-- Enables accurate source citations
-- Balances chunk size with semantic coherence
-
 ### Semantic Search with ChromaDB
 
 **How it works:**
@@ -233,17 +205,6 @@ The application uses **LangGraph** with a **single conditional graph** and **5 s
 5. User asks question → Question embedded
 6. Similarity search finds top 4 most relevant chunks
 7. Chunks sent to GPT-4o for answer generation
-
-**Why ChromaDB:**
-- Lightweight and fast for single-document use cases
-- No external dependencies or servers needed
-- Built-in OpenAI embeddings integration
-- In-memory mode perfect for sessions
-
-**Why top 4 chunks:**
-- Provides sufficient context (≈4000 characters)
-- Stays within GPT-4o context window efficiently
-- Reduces noise from less relevant chunks
 
 ### RAG Prompt Engineering
 
@@ -304,105 +265,6 @@ Instructions:
 - Lower infrastructure costs
 - Perfect for personal/demo use
 
-## Important Notes
-
-🔐 **API Key Security**: Never share your OpenAI API key. Keep it in `.env` and ensure `.env` is in `.gitignore`. The key is only used server-side.
-
-💰 **Cost Considerations**:
-- Each document processing: $0.001-$0.01 (embeddings)
-- Each query: $0.01-$0.03 (GPT-4o)
-- Estimated cost per document session: $0.05-$0.20
-- Monitor usage at https://platform.openai.com/usage
-
-📊 **Data Handling**:
-- No data stored permanently
-- Vector store lives in Streamlit session state (in-memory)
-- Closing browser clears all data
-- Downloaded files stored only on your machine
-
-📄 **PDF Limitations**:
-- Text-based PDFs work best
-- Scanned PDFs need OCR (not included)
-- Image-heavy PDFs may have limited extractable text
-- Very large PDFs (>100 pages) may be slow to process
-
-⏱️ **Processing Time**:
-- PDF loading: 1-3 seconds
-- Chunking: 1-2 seconds
-- Embeddings generation: 5-15 seconds (depends on chunk count)
-- Query processing: 3-8 seconds
-- Total processing: 10-30 seconds for typical documents
-
-🔍 **Query Quality Tips**:
-- Be specific in your questions
-- Reference sections or topics when known
-- Ask one question at a time for best results
-- Follow up questions build on previous context
-
-## Troubleshooting
-
-### Error: "OpenAI API key not found"
-
-**Solutions:**
-* Check that `.env` file exists in `rag_agents/pdf_rag_agent/` directory
-* Verify the file contains: `OPENAI_API_KEY=sk-...`
-* Ensure no extra spaces around the `=` sign
-* Restart the Streamlit app after adding the key
-
-### Error during PDF processing
-
-**Possible causes:**
-* PDF is password-protected
-* PDF is corrupted or unreadable
-* PDF contains only images (needs OCR)
-
-**Solutions:**
-* Try a different PDF file
-* Check if PDF opens normally in a PDF viewer
-* Remove password protection before uploading
-* Use text-based PDFs, not scanned images
-
-### Error: "No document has been processed yet"
-
-**Solutions:**
-* Upload and process a PDF before querying
-* If you see this after processing, refresh the page and try again
-* Check console for processing errors
-
-### Answers are not accurate or relevant
-
-**Possible causes:**
-* Question too vague or broad
-* Relevant information not in document
-* Chunks too small to capture full context
-
-**Solutions:**
-* Be more specific in your questions
-* Ask about topics you know are in the document
-* Try rephrasing your question
-* Check retrieved chunks to see what context was used
-
-### ChromaDB errors or warnings
-
-**Solutions:**
-* These are usually harmless warnings
-* Restart the Streamlit app
-* Check Python version (3.8+ required)
-* Ensure all dependencies installed correctly
-
-### Slow performance
-
-**Causes:**
-* Large PDF with many chunks
-* Network latency to OpenAI API
-* Many concurrent queries
-
-**Solutions:**
-* Wait for processing to complete
-* Check internet connection
-* Consider smaller PDFs or specific sections
-* Use local LLM for faster processing (requires code changes)
-
 ## Tech Stack
 
 * **LangGraph** - Multi-agent orchestration framework for building reliable RAG workflows
@@ -414,25 +276,10 @@ Instructions:
 * **Python 3.8+** - Core programming language with async support
 * **python-dotenv** - Secure environment variable management
 
-## Future Enhancements
 
-Planned features (contributions welcome):
-
-- [ ] Multi-document support (query across multiple PDFs)
-- [ ] Persistent vector store (save processed documents)
-- [ ] OCR integration for scanned PDFs
-- [ ] Adjustable chunk size and retrieval parameters
-- [ ] Support for other document formats (DOCX, TXT, HTML)
-- [ ] Download answers as markdown files
-- [ ] Export full conversation history
-- [ ] Advanced filters (by page range, sections)
-- [ ] Comparison mode (compare answers across documents)
-- [ ] Local LLM support (Ollama, LlamaCPP)
-- [ ] Chat interface with conversational memory
 
 ---
 
-**Built with ❤️ by Atul | Follow for more AI projects**
 
 ⭐ **Star this repo** if you find it useful!
 
