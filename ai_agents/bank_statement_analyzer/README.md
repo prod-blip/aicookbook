@@ -2,6 +2,12 @@
 
 An AI-powered bank statement analyzer that automatically extracts transactions from PDF statements, categorizes spending using GPT-4o, and provides comprehensive financial insights with visual analytics.
 
+
+
+https://github.com/user-attachments/assets/10f5e49a-a54a-4da7-afa9-58f097ced095
+
+
+
 ## ✨ Features
 
 - **Automatic Transaction Extraction** - Upload PDF bank statements and get all transactions extracted automatically using AI
