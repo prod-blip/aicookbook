@@ -1,0 +1,21 @@
+# Core Framework
+langgraph>=0.0.40
+langchain-core
+langchain-openai
+langchain-community
+
+# RAG & Vector Store
+chromadb>=0.4.0
+openai
+
+# Audio Transcription
+assemblyai>=0.28.0
+
+# Text Processing
+langchain-text-splitters
+
+# Frontend
+streamlit>=1.28.0
+
+# Utilities
+python-dotenv
