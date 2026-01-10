@@ -1,0 +1,21 @@
+# Core Framework
+langgraph
+langchain-core
+langchain-openai
+langchain-community
+
+# API Clients
+openai
+tavily-python
+
+# Frontend
+streamlit
+
+# Observability (Optional - for Phoenix tracing)
+arize-phoenix
+openinference-instrumentation-langchain
+opentelemetry-exporter-otlp-proto-http
+
+# Utilities
+python-dotenv
+typing-extensions
