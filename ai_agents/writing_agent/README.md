@@ -2,6 +2,12 @@
 
 An intelligent blogging assistant that helps you create professional blog posts through a structured, multi-stage workflow with human approval at each step. Built with LangGraph and featuring web research capabilities.
 
+
+
+https://github.com/user-attachments/assets/161c1803-fac6-4468-8709-f06a61b0b541
+
+
+
 ## Features
 
 - **Structured Writing Workflow** - Guides you through requirements gathering, outlining, drafting, editing, and social media creation
@@ -149,88 +155,6 @@ streamlit run streamlit_app.py
 - Interrupt points allow human approval before each stage
 - State tracking stores all intermediate outputs
 
-## Output Examples
-
-### Blog Outline
-```
-# Title: Building Production-Ready AI Agents: Lessons from LangGraph
-
-## Introduction
-- Hook about the rise of AI agents
-- Preview of key learnings
-
-## Section 1: Logic Over Prompts
-...
-
-## Conclusion
-- Summary of learnings
-- Call to action
-```
-
-### Social Media Posts
-
-**LinkedIn:**
-```
-🤖 After building dozens of AI agents with LangGraph, I've learned that
-successful agent design is 80% architecture and 20% prompt engineering.
-
-The biggest breakthrough? Realizing that graphs enforce tool calling better
-than prompts ever could...
-
-[Full post with insights]
-```
-
-**Twitter:**
-```
-Building AI agents with LangGraph taught me: structure > prompts.
-
-Tool calling works best when enforced by graphs, not LLM instructions.
-
-Read more: [link]
-```
-
-## Important Notes
-
-**API Costs:**
-- Uses OpenAI GPT-4o (default temperature=0)
-- Tavily search API calls (3 results max per query)
-- Costs vary based on content length and research depth
-- Typical blog post: $0.10-$0.50 depending on complexity
-
-**Best Practices:**
-- Provide detailed initial pointers for better results
-- Review and refine at each stage - the agent learns from your feedback
-- Use web search sparingly to reduce API costs
-- Save your outputs immediately after generation
-
-**Limitations:**
-- Requires internet connection for API calls
-- Quality depends on input detail and feedback quality
-- LLM may occasionally need regeneration for optimal output
-- Tool routing relies on LLM deciding when to use web search
-
-## Troubleshooting
-
-**"API Key Missing" Error:**
-- Ensure `.env` file is in the same directory as the scripts
-- Check that variable names match exactly: `OPENAI_API_KEY`, `TAVILY_API_KEY`
-- Restart the application after adding keys
-
-**Tool Loops (Repeated Searches):**
-- The agent includes safeguards against infinite tool loops
-- If it happens, provide feedback: "Stop searching and proceed with the outline"
-
-**Duplicate Output:**
-- Fixed in current version with `calling_node` state tracking
-- If you see duplicates, ensure you're using the latest version
-
-**Memory Issues with Long Blogs:**
-- For very long content, break into multiple shorter sessions
-- Consider increasing context limits in code if needed
-
-**State Not Persisting:**
-- CLI uses in-memory checkpointer (lost on restart)
-- For persistent state, implement SQLite checkpointer (see LangGraph docs)
 
 ## Tech Stack
 
