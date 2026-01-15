@@ -1,12 +1,10 @@
 # 🤖 AI Cookbook
 
-A hands-on collection of production-ready AI agents and systems built by a Product Manager who ships code. This repository features practical AI applications spanning autonomous agents, RAG pipelines, voice cloning, financial automation, and multi-agent workflows. Built with models from OpenAI, Anthropic, and fine-tuned open-source alternatives running locally on M4 MacBook.
+A hands-on collection of production-ready AI agents and systems. This repository features practical AI applications spanning autonomous agents, RAG pipelines, voice cloning, financial automation, and multi-agent workflows. Built with models from OpenAI, Anthropic, and fine-tuned open-source alternatives.
 
 ## 🔥 Why AI Cookbook?
 
 💡 **Real-world AI projects** that solve actual problems — not just demos or proof-of-concepts.
-
-🛠️ **Built by a PM** with 7+ years in tech/product, focusing on shipping fast and iterating based on real feedback.
 
 🎓 **Learn how to build** end-to-end AI systems from data extraction to autonomous decision-making.
 
