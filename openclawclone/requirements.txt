@@ -1,0 +1,10 @@
+# Core Framework
+langgraph
+langchain-core
+langchain-openai
+
+# Telegram Bot
+python-telegram-bot
+
+# Utilities
+python-dotenv
