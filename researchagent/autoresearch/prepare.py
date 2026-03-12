@@ -28,7 +28,9 @@ DATA_DIR = os.path.join(CACHE_DIR, "data")
 TOKENIZER_DIR = os.path.join(CACHE_DIR, "tokenizer")
 
 # TinyStories dataset (your chosen dataset)
-BASE_URL = "https://huggingface.co/datasets/karpathy/tinystories-gpt4-clean/resolve/main"
+# This dataset has a single file, not multiple shards
+DATA_URL = "https://huggingface.co/datasets/karpathy/tinystories-gpt4-clean/resolve/main/tinystories_gpt4_clean.parquet"
+DATA_FILENAME = "tinystories_gpt4_clean.parquet"
 
 VOCAB_SIZE = 8192  # Number of unique tokens in vocabulary
 
@@ -44,32 +46,35 @@ BOS_TOKEN = "<|endoftext|>"  # Beginning of sequence token
 # Data Download
 # ---------------------------------------------------------------------------
 
-def download_single_shard(args):
+def download_data():
     """
-    Download one parquet shard with retries.
+    Download the TinyStories dataset (single parquet file, ~673MB).
 
-    Args:
-        args: Tuple of (shard_index, total_shards) for filename formatting
-
-    Returns:
-        True on success, False on failure
+    Downloads with retry logic and progress indication.
     """
-    index, total_shards = args
-    filename = f"data-{index:05d}-of-{total_shards:05d}.parquet"
-    filepath = os.path.join(DATA_DIR, filename)
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+    filepath = os.path.join(DATA_DIR, DATA_FILENAME)
 
     # Skip if already downloaded
     if os.path.exists(filepath):
+        size_mb = os.path.getsize(filepath) / (1024 * 1024)
+        print(f"✅ Data already downloaded: {DATA_FILENAME} ({size_mb:.1f} MB)")
         return True
 
-    url = f"{BASE_URL}/{filename}"
+    print(f"📥 Downloading {DATA_FILENAME} (~673 MB)...")
+    print(f"   From: {DATA_URL}")
+
     max_attempts = 5
 
     for attempt in range(1, max_attempts + 1):
         try:
-            # Stream download to handle large files
-            response = requests.get(url, stream=True, timeout=30)
+            # Stream download with progress
+            response = requests.get(DATA_URL, stream=True, timeout=60)
             response.raise_for_status()
+
+            total_size = int(response.headers.get('content-length', 0))
+            downloaded = 0
 
             # Write to temp file first, then rename (atomic = no corrupted files)
             temp_path = filepath + ".tmp"
@@ -77,43 +82,30 @@ def download_single_shard(args):
                 for chunk in response.iter_content(chunk_size=1024 * 1024):  # 1MB chunks
                     if chunk:
                         f.write(chunk)
+                        downloaded += len(chunk)
+                        if total_size > 0:
+                            pct = (downloaded / total_size) * 100
+                            print(f"\r   Progress: {pct:.1f}% ({downloaded // (1024*1024)} MB)", end="", flush=True)
+
+            print()  # New line after progress
             os.rename(temp_path, filepath)
-            print(f"  ✅ Downloaded {filename}")
+            size_mb = os.path.getsize(filepath) / (1024 * 1024)
+            print(f"✅ Downloaded {DATA_FILENAME} ({size_mb:.1f} MB)")
             return True
 
         except (requests.RequestException, IOError) as e:
-            print(f"  ❌ Attempt {attempt}/{max_attempts} failed: {e}")
+            print(f"\n  ❌ Attempt {attempt}/{max_attempts} failed: {e}")
             # Cleanup any partial/failed downloads
             for path in [filepath + ".tmp", filepath]:
                 if os.path.exists(path):
                     os.remove(path)
             if attempt < max_attempts:
-                time.sleep(2 ** attempt)  # Exponential backoff: 2s, 4s, 8s, 16s
+                wait_time = 2 ** attempt
+                print(f"   Retrying in {wait_time}s...")
+                time.sleep(wait_time)
 
+    print("❌ Download failed after all attempts")
     return False
-
-
-def download_data(num_shards=2, download_workers=4):
-    """
-    Download training shards in parallel.
-
-    Args:
-        num_shards: Number of data shards to download (default 2 for testing)
-        download_workers: Parallel download threads (default 4)
-    """
-    os.makedirs(DATA_DIR, exist_ok=True)
-
-    # Create list of (index, total) tuples for each shard
-    shard_args = [(i, num_shards) for i in range(num_shards)]
-
-    print(f"📥 Downloading {num_shards} shards to {DATA_DIR}...")
-
-    # Parallel download using multiprocessing
-    with Pool(processes=download_workers) as pool:
-        results = pool.map(download_single_shard, shard_args)
-
-    success = sum(results)
-    print(f"📊 Downloaded {success}/{num_shards} shards")
 
 
 # ---------------------------------------------------------------------------
@@ -229,22 +221,13 @@ if __name__ == "__main__":
     Run this script once before starting experiments.
 
     Usage:
-        python prepare.py              # Download 2 shards (default)
-        python prepare.py --shards 5   # Download 5 shards
+        python prepare.py
 
     What it does:
-        1. Downloads data shards from HuggingFace
+        1. Downloads TinyStories dataset from HuggingFace (~673 MB)
         2. Trains BPE tokenizer on the data
         3. Saves everything to ~/.cache/autoresearch/
     """
-    import argparse
-
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description="Prepare data for autoresearch")
-    parser.add_argument("--shards", type=int, default=2,
-                        help="Number of shards to download (default: 2)")
-    args = parser.parse_args()
-
     print("=" * 60)
     print("🚀 AUTORESEARCH DATA PREPARATION")
     print("=" * 60)
@@ -254,7 +237,7 @@ if __name__ == "__main__":
     # Step 1: Download data
     print("STEP 1: Download Data")
     print("-" * 40)
-    download_data(num_shards=args.shards)
+    download_data()
     print()
 
     # Step 2: Train tokenizer
