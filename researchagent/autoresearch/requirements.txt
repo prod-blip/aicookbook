@@ -1,0 +1,12 @@
+# Core Framework
+torch>=2.0.0
+
+# Data Processing
+pyarrow>=14.0.0
+requests>=2.28.0
+
+# Tokenizer
+tiktoken>=0.5.0
+
+# Optional: For faster training on NVIDIA GPUs
+# flash-attn>=2.0.0  # Uncomment if using CUDA
