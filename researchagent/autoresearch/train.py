@@ -40,7 +40,6 @@ N_EMBED = 384         # Embedding dimension (must be divisible by N_HEADS)
 DROPOUT = 0.1         # Dropout rate for regularization
 
 # Training
-BATCH_SIZE = 32       # Sequences per batch
 LEARNING_RATE = 3e-4  # Adam learning rate
 WEIGHT_DECAY = 0.1    # L2 regularization
 
@@ -59,6 +58,17 @@ def get_device():
 
 DEVICE = get_device()
 print(f"🖥️  Using device: {DEVICE}")
+
+# Batch size depends on device memory
+# MPS (Mac) has less memory than CUDA, so use smaller batch
+if DEVICE.type == "mps":
+    BATCH_SIZE = 8    # Smaller batch for Mac (limited GPU memory)
+elif DEVICE.type == "cuda":
+    BATCH_SIZE = 32   # Larger batch for NVIDIA GPUs
+else:
+    BATCH_SIZE = 4    # CPU is slow, use small batch
+
+print(f"📦 Batch size: {BATCH_SIZE}")
 
 
 # ---------------------------------------------------------------------------
