@@ -22,26 +22,32 @@ import torch.nn.functional as F
 
 # Import from prepare.py
 from prepare import (
-    MAX_SEQ_LEN,
+    MAX_SEQ_LEN as _MAX_SEQ_LEN,
     TIME_BUDGET,
-    EVAL_TOKENS,
+    EVAL_TOKENS as _EVAL_TOKENS,
     Tokenizer,
     list_parquet_files,
 )
+
+# Override for faster training/eval on MPS
+MAX_SEQ_LEN = 128  # Ultra-short context, max steps
+EVAL_TOKENS = 5 * 524288  # ~2.6M tokens (faster eval, still representative)
 
 # ---------------------------------------------------------------------------
 # Hyperparameters (AI agent experiments with these)
 # ---------------------------------------------------------------------------
 
 # Model architecture
-N_LAYERS = 6          # Number of transformer layers
-N_HEADS = 6           # Number of attention heads
-N_EMBED = 384         # Embedding dimension (must be divisible by N_HEADS)
-DROPOUT = 0.1         # Dropout rate for regularization
+N_LAYERS = 4          # Optimal depth
+N_HEADS = 3           # 3 heads, 192/3 = 64 dim per head
+N_EMBED = 192         # Sweet spot for MPS speed vs capacity
+DROPOUT = 0.0         # No dropout — too few steps for regularization to help
 
 # Training
-LEARNING_RATE = 3e-4  # Adam learning rate
-WEIGHT_DECAY = 0.1    # L2 regularization
+LEARNING_RATE = 1.5e-3  # Slightly higher LR
+WEIGHT_DECAY = 0.01     # Light regularization
+GRAD_CLIP = 1.0       # Gradient clipping for stability
+WARMUP_STEPS = 20     # LR warmup steps
 
 # ---------------------------------------------------------------------------
 # Device Setup
@@ -62,7 +68,7 @@ print(f"🖥️  Using device: {DEVICE}")
 # Batch size depends on device memory
 # MPS (Mac) has less memory than CUDA, so use smaller batch
 if DEVICE.type == "mps":
-    BATCH_SIZE = 8    # Smaller batch for Mac (limited GPU memory)
+    BATCH_SIZE = 8    # Sweet spot for MPS
 elif DEVICE.type == "cuda":
     BATCH_SIZE = 32   # Larger batch for NVIDIA GPUs
 else:
@@ -227,6 +233,10 @@ class GPT(nn.Module):
 
         # Initialize weights
         self.apply(self._init_weights)
+        # GPT-2 style: scale residual projections by 1/sqrt(2*n_layers)
+        for pn, p in self.named_parameters():
+            if pn.endswith('out_proj.weight') or pn.endswith('net.2.weight'):
+                torch.nn.init.normal_(p, mean=0.0, std=0.02 / math.sqrt(2 * n_layers))
 
     def _init_weights(self, module):
         """Initialize weights with small random values."""
@@ -528,6 +538,17 @@ def train():
         if elapsed >= TIME_BUDGET:
             break
 
+        # Learning rate schedule: linear warmup then cosine decay based on TIME
+        warmup_time = WARMUP_STEPS * (elapsed / max(step, 1))  # estimate warmup duration
+        if step < WARMUP_STEPS:
+            lr = LEARNING_RATE * (step + 1) / WARMUP_STEPS
+        else:
+            # Time-based cosine decay — uses full training budget
+            progress = min((elapsed - warmup_time) / max(TIME_BUDGET - warmup_time, 1), 1.0)
+            lr = LEARNING_RATE * (0.05 + 0.95 * 0.5 * (1.0 + math.cos(math.pi * progress)))
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
+
         # Get batch
         inputs, targets = train_loader.get_batch()
 
@@ -535,9 +556,10 @@ def train():
         loss = model(inputs, targets)
 
         # Backward pass
-        optimizer.zero_grad()  # Clear old gradients
-        loss.backward()        # Compute new gradients
-        optimizer.step()       # Update weights
+        optimizer.zero_grad()
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), GRAD_CLIP)
+        optimizer.step()
 
         # Track loss
         total_loss += loss.item()
@@ -547,7 +569,7 @@ def train():
         if step % log_interval == 0:
             avg_loss = total_loss / log_interval
             remaining = TIME_BUDGET - elapsed
-            print(f"   Step {step:5d} | Loss: {avg_loss:.4f} | Time left: {remaining:.0f}s")
+            print(f"   Step {step:5d} | Loss: {avg_loss:.4f} | LR: {lr:.6f} | Time left: {remaining:.0f}s")
             total_loss = 0.0
 
     print("-" * 60)
@@ -591,6 +613,7 @@ def save_model(model, val_bpb):
             "batch_size": BATCH_SIZE,
             "learning_rate": LEARNING_RATE,
             "weight_decay": WEIGHT_DECAY,
+            "max_seq_len": MAX_SEQ_LEN,
         }
     }
 

@@ -40,13 +40,15 @@ def load_model(model_name):
     tokenizer = Tokenizer.load()
 
     # Create model with saved hyperparameters
+    # Use max_seq_len from checkpoint if available (for models trained with overridden seq_len)
+    saved_seq_len = hp.get("max_seq_len", MAX_SEQ_LEN)
     model = GPT(
         vocab_size=tokenizer.vocab_size,
         n_embed=hp["n_embed"],
         n_heads=hp["n_heads"],
         n_layers=hp["n_layers"],
         dropout=0.0,  # No dropout during generation
-        max_seq_len=MAX_SEQ_LEN,
+        max_seq_len=saved_seq_len,
     ).to(DEVICE)
 
     # Load weights
