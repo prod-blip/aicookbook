@@ -4,5 +4,4 @@ checkpoints/
 *.pt
 experiments/
 experiments.jsonl
-autoresearch/README.md
 notes.md
