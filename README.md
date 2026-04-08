@@ -1,16 +1,17 @@
 <!--
   AI Cookbook Repository
 
-  This repository is a curated collection of production-ready AI agents and systems.
-  It provides hands-on examples for building real-world AI applications including:
-  - Autonomous AI agents (bank statement analyzer, data analysis, travel planning, etc.)
-  - RAG (Retrieval Augmented Generation) pipelines for audio and PDF processing
-  - MCP (Model Context Protocol) integrations for GitHub and trading platforms
+  This repository is a curated collection of production-ready AI agents
+  and systems. It provides hands-on examples for building real-world AI
+  applications including:
+  - Autonomous AI agents (bank statement analyzer, data analysis, etc.)
+  - RAG pipelines for audio and PDF processing
+  - MCP integrations for GitHub and trading platforms
   - Voice cloning systems for content automation
   - Multi-agent workflows using LangChain and LangGraph
 
-  Built with models from OpenAI, Anthropic, and fine-tuned open-source alternatives.
-  Each project is designed to solve actual problems, not just serve as demos.
+  Built with models from OpenAI, Anthropic, and open-source alternatives.
+  Each project solves actual problems, not just demos.
 -->
 
 # 🤖 AI Cookbook
