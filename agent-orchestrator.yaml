@@ -1,0 +1,9 @@
+projects:
+  aicookbook:
+    repo: prod-blip/aicookbook
+    path: .
+    defaultBranch: main
+    tracker:
+      plugin: github
+    scm:
+      plugin: github
