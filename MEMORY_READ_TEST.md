@@ -1,0 +1,3 @@
+- No top-level test runner was found at the repo root; only README.md, agent-orchestrator.yaml, and dotfiles are present there.
+- The default branch is main.
+- AO is configured to use the GitHub repo prod-blip/aicookbook for this project.
